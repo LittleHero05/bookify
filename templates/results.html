@@ -3,31 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bookify - Results</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Results</title>
 </head>
 <body>
-    <h1>Bookify - Visualization Results</h1>
-    <a href="{{ url_for('index') }}">Upload Another File</a>
+    <h1>Results</h1>
     <div>
-        <h2>Reading Trends Over Time</h2>
-        {{ graphs['reading_trends']|safe }}
+        <h2>Reading Trends</h2>
+        <iframe src="{{ url_for('serve_plot', filename='reading_trends.html') }}" width="100%" height="400"></iframe>
     </div>
     <div>
-        <h2>Genre Distribution of Books Read</h2>
-        {{ graphs['genre_distribution']|safe }}
+        <h2>Author Popularity</h2>
+        <iframe src="{{ url_for('serve_plot', filename='author_popularity.html') }}" width="100%" height="400"></iframe>
     </div>
     <div>
-        <h2>Most Common Authors on the "Read" Shelf</h2>
-        {{ graphs['author_popularity']|safe }}
-    </div>
-    <div>
-        <h2>Distribution of Book Ratings</h2>
-        {{ graphs['ratings_analysis']|safe }}
+        <h2>Ratings Analysis</h2>
+        <iframe src="{{ url_for('serve_plot', filename='ratings_analysis.html') }}" width="100%" height="400"></iframe>
     </div>
     <div>
         <h2>Bookshelf Analysis</h2>
-        {{ graphs['bookshelf_analysis']|safe }}
+        <iframe src="{{ url_for('serve_plot', filename='bookshelf_analysis.html') }}" width="100%" height="400"></iframe>
     </div>
 </body>
 </html>

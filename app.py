@@ -1,11 +1,15 @@
-from flask import Flask, request, render_template, redirect, url_for
+from flask import Flask, request, render_template, redirect, url_for, send_from_directory
 import pandas as pd
 import plotly.express as px
 import plotly.io as pio
 from io import StringIO
-import base64
+import os
 
 app = Flask(__name__)
+app.config['UPLOAD_FOLDER'] = 'static/plots'
+
+if not os.path.exists(app.config['UPLOAD_FOLDER']):
+    os.makedirs(app.config['UPLOAD_FOLDER'])
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
@@ -49,7 +53,10 @@ def create_reading_trends_plot(df):
                  text='Books Read',  # Add text labels on bars
                  color='Books Read',  # Color the bars based on the number of books read
                  color_continuous_scale='Temps') 
-    return fig_to_html(fig)
+    
+    plot_path = os.path.join(app.config['UPLOAD_FOLDER'], 'reading_trends.html')
+    pio.write_html(fig, file=plot_path, full_html=False)
+    return plot_path
 
 
 def create_author_popularity_plot(df):
@@ -61,7 +68,9 @@ def create_author_popularity_plot(df):
                  title='Most Common Authors on the "Read" Shelf', 
                  labels={'Author': 'Author', 'Count': 'Number of Books'},
                  color='Count', color_continuous_scale='Temps')
-    return fig_to_html(fig)
+    plot_path = os.path.join(app.config['UPLOAD_FOLDER'], 'author_popularity.html')
+    pio.write_html(fig, file=plot_path, full_html=False)
+    return plot_path
 
 def create_ratings_analysis_plot(df):
     df_ratings = df[df['My Rating'] > 0].copy()
@@ -70,7 +79,9 @@ def create_ratings_analysis_plot(df):
                        labels={'My Rating': 'Rating', 'count': 'Number of Books'},
                        color='My Rating',  # This will color bars based on the 'My Rating' values
                        color_discrete_sequence=px.colors.qualitative.Set1)
-    return fig_to_html(fig)
+    plot_path = os.path.join(app.config['UPLOAD_FOLDER'], 'ratings_analysis.html')
+    pio.write_html(fig, file=plot_path, full_html=False)
+    return plot_path
 
 def create_bookshelf_analysis_plot(df):
     df_shelves = df.dropna(subset=['Exclusive Shelf']).copy()
@@ -83,7 +94,13 @@ def create_bookshelf_analysis_plot(df):
                  title='Bookshelf Analysis', 
                  labels={'Shelf': 'Bookshelf', 'Count': 'Number of Books'})
     
-    return fig_to_html(fig)
+    plot_path = os.path.join(app.config['UPLOAD_FOLDER'], 'bookshelf_analysis.html')
+    pio.write_html(fig, file=plot_path, full_html=False)
+    return plot_path
+
+@app.route('/static/plots/<filename>')
+def serve_plot(filename):
+    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
 def fig_to_html(fig):
     fig_html = pio.to_html(fig, full_html=False)
