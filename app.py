@@ -2,7 +2,6 @@ from flask import Flask, request, render_template, redirect, url_for, send_from_
 import pandas as pd
 import plotly.express as px
 import plotly.io as pio
-from io import StringIO
 import os
 
 app = Flask(__name__)
@@ -102,9 +101,9 @@ def create_bookshelf_analysis_plot(df):
 def serve_plot(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
-def fig_to_html(fig):
-    fig_html = pio.to_html(fig, full_html=False)
-    return fig_html
+#def fig_to_html(fig):
+#    fig_html = pio.to_html(fig, full_html=False)
+ #   return fig_html
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=80, debug=True)
